@@ -1,15 +1,21 @@
 
-from cgitb import text
 from tkinter import *
 from tkinter import ttk
+from tkinter import font
+
+from numpy import pad
 
 
 root= Tk()
 root.geometry("300x400")
 style = ttk.Style()
+
 frame = ttk.Frame(root,padding=10)
 #frame.grid()
 style.configure("BW.TLabel", background="white")
+style.configure("Test.TLabel", background="black", foreground = "white")
+fontExample = font.Font(family="Arial", size=16, weight="bold", slant="italic")
+
 canvas  = Canvas(root)
 x,y,x2,y2=0,0,0,0
 Frame_height, Frame_width = 400,300
@@ -21,7 +27,8 @@ step=100
 list_  = [["_","_","_"],["_","_","_"],["_","_","_"]]
 
 pTurn = "X"
-labelText = Label(root,text="Hello")
+labelText = ttk.Label(root,text="Hello", style="Test.TLabel",font=fontExample )
+
 
 isGameRunning = True
 #when canvas is clicked
@@ -33,28 +40,30 @@ def callback(event):
 
         #player Turn switch and draw image
         if(isLabeled and pTurn=="X"):
-            Label(root,image=LabelImgX).place(x=cords[0],y=cords[1])
+            ttk.Label(root,image=LabelImgX).place(x=cords[0]+10,y=cords[1]+10)
             pTurn = "O"
+            labelText.config(text="O Turn")
+
         elif(isLabeled and pTurn=="O"):
-            Label(root,image=LabelImgY).place(x=cords[0],y=cords[1])
+            ttk.Label(root,image=LabelImgY).place(x=cords[0]+10,y=cords[1]+10)
             pTurn = "X"
+            labelText.config(text="X Turn")
 
         #Display Winner status
         if(checkHor_Vert() or checkLeftDiagonal() or checkRightDiagonal()):
             if(pTurn=="X"):
                 print("Player O won")
-                labelText.config(text="Player O won")
+                labelText.config(text="O won")
             else:
-                labelText.config(text="Player X won")
-
-                print("Player X won")
+                labelText.config(text="X won")
+                print("X won")
             isGameRunning =False
 
   
     print(list_)
 
-LabelImgX = PhotoImage(file="X.png")
-LabelImgY = PhotoImage(file="O.png")
+LabelImgX = PhotoImage(file="X.png", width=80,height=80)
+LabelImgY = PhotoImage(file="O.png",width=80,height=80)
 
 #draw column
 for i in range(0, Frame_height, step): canvas.create_line(0,i,Frame_height,i,width=5)
@@ -114,11 +123,10 @@ def checkRightDiagonal():
 def labelSquare(label, x,y):
     if list_[y][x] == ("_"):
         list_[y][x] = label
-        
         return True
     return False
 labelText.pack()
-labelText.place(x=100,y=300)
+labelText.place(x=100,y=300,)
 
 canvas.bind("<Button-1>", callback)
 canvas.pack()
