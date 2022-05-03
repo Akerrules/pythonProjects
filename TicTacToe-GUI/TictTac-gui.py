@@ -10,6 +10,7 @@ root.geometry("300x400")
 style = ttk.Style()
 
 frame = ttk.Frame(root,padding=10)
+root.title("Aker's Tic Tac Toe")
 #frame.grid()
 root.resizable(0,0)
 style.configure("BW.TLabel", background="white")
