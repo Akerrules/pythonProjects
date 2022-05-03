@@ -1,24 +1,25 @@
 
+from cProfile import label
+import time
+
 from tkinter import *
 from tkinter import ttk
 from tkinter import font
-
-from numpy import pad
-
-
 root= Tk()
 root.geometry("300x400")
 style = ttk.Style()
 
 frame = ttk.Frame(root,padding=10)
 #frame.grid()
+root.resizable(0,0)
 style.configure("BW.TLabel", background="white")
 style.configure("Test.TLabel", background="black", foreground = "white")
 fontExample = font.Font(family="Arial", size=16, weight="bold", slant="italic")
 
 canvas  = Canvas(root)
+canvas.config(width=500,height=500)
 x,y,x2,y2=0,0,0,0
-Frame_height, Frame_width = 400,300
+Frame_height, Frame_width = 300,300
 
 #increment by 100
 step=100
@@ -26,27 +27,38 @@ step=100
            #00  01  02   10  11  12    20  21  22
 list_  = [["_","_","_"],["_","_","_"],["_","_","_"]]
 
-pTurn = "X"
-labelText = ttk.Label(root,text="Hello", style="Test.TLabel",font=fontExample )
 
+pTurn = "X"
+labelText = ttk.Label(root,text="X turn", style="Test.TLabel",font=fontExample,width=20,anchor=CENTER, padding=35)
+
+tilesLeft = 9
+listOFimage=[]
+LabelImgX = PhotoImage(file="X.png", width=80,height=80)
+LabelImgY = PhotoImage(file="O.png",width=80,height=80)
 
 isGameRunning = True
 #when canvas is clicked
 def callback(event):
-    global pTurn, list_, isGameRunning
+    global pTurn, list_, isGameRunning, tilesLeft, listOFimage
     if(isGameRunning):
         cords = calSquare(event.x,event.y)
         isLabeled = labelSquare(pTurn, int(cords[0]/step),int(cords[1]/step))
 
         #player Turn switch and draw image
         if(isLabeled and pTurn=="X"):
-            ttk.Label(root,image=LabelImgX).place(x=cords[0]+10,y=cords[1]+10)
+            labeltest=ttk.Label(root,image=LabelImgX)
+            labeltest.place(x=cords[0]+10,y=cords[1]+10)
+            listOFimage.append(labeltest)
             pTurn = "O"
+            tilesLeft = tilesLeft-1
             labelText.config(text="O Turn")
 
         elif(isLabeled and pTurn=="O"):
-            ttk.Label(root,image=LabelImgY).place(x=cords[0]+10,y=cords[1]+10)
+            labeltest = ttk.Label(root,image=LabelImgY)
+            labeltest.place(x=cords[0]+10,y=cords[1]+10)
+            listOFimage.append(labeltest)
             pTurn = "X"
+            tilesLeft=tilesLeft-1
             labelText.config(text="X Turn")
 
         #Display Winner status
@@ -56,20 +68,30 @@ def callback(event):
                 labelText.config(text="O won")
             else:
                 labelText.config(text="X won")
-                print("X won")
+                print("X won")  
             isGameRunning =False
-
-  
+        elif(tilesLeft==0):
+            isGameRunning =False
+            labelText.config(text="Its a Draw")
+    else:
+        reset()
     print(list_)
 
-LabelImgX = PhotoImage(file="X.png", width=80,height=80)
-LabelImgY = PhotoImage(file="O.png",width=80,height=80)
-
+def reset():
+    global list_,tilesLeft, canvas, listOFimage, isGameRunning, flag
+    list_  = [["_","_","_"],["_","_","_"],["_","_","_"]]
+    tilesLeft = 9
+    print(listOFimage)
+    for i in range(len(listOFimage)):
+        listOFimage[i].destroy()
+    isGameRunning = TRUE
+    labelText.config(text=pTurn+" turn")
+    flag = FALSE
 #draw column
-for i in range(0, Frame_height, step): canvas.create_line(0,i,Frame_height,i,width=5)
+for i in range(0, Frame_height, step): canvas.create_line(0,i,Frame_width,i,width=5)
 
 #draw row
-for i in range(0, Frame_width, step): canvas.create_line(i,0,i,Frame_width,width=5)
+for i in range(0, Frame_width, step): canvas.create_line(i,0,i,Frame_height,width=5)
 
 
 #ttk.Button(frame, text="quit", command=root.destroy).grid(column=1, row=3)
@@ -126,7 +148,7 @@ def labelSquare(label, x,y):
         return True
     return False
 labelText.pack()
-labelText.place(x=100,y=300,)
+labelText.place(x=0,y=300)
 
 canvas.bind("<Button-1>", callback)
 canvas.pack()
