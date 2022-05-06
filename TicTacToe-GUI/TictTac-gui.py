@@ -1,6 +1,4 @@
 
-from cProfile import label
-import time
 
 from tkinter import *
 from tkinter import ttk
