@@ -23,11 +23,11 @@ for student in  STUDENT_ANSWER:
     studentMARK =0
 
     for index, q in enumerate(REAL_TEST_ANSWER):
-        for answer in q[1]: # go through each answer choice and check if it exist in the student choices
+        for answer in q[0]: # go through each answer choice and check if it exist in the student choices
            if(answer in student[index+1]):
                 resultCount= resultCount+1
        #print("question: ", index+1 ,student[0], student[index+1],resultCount/len(q[1]), q[1])  
-        studentMARK += resultCount/len(q[1])  
+        studentMARK += resultCount/len(q[0])  
         resultCount=0
        
     testResult[str(student[0])] = studentMARK
